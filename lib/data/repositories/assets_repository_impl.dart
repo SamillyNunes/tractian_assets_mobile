@@ -20,14 +20,20 @@ class AssetsRepositoryImpl implements AssetsRepository {
   }
 
   @override
-  Future<List<AssetModel>> getAllAssets(String companyId) {
-    // TODO: implement getAllCompanies
-    throw UnimplementedError();
+  Future<List<LocationModel>> getAllLocations(String companyId) async {
+    try {
+      final data =
+          await apiService.get(resource: 'companies/$companyId/locations');
+
+      return data.map((json) => LocationModel.fromMap(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to get locations, error: $e');
+    }
   }
 
   @override
-  Future<List<LocationModel>> getAllLocations(String companyId) {
-    // TODO: implement getAllLocations
+  Future<List<AssetModel>> getAllAssets(String companyId) {
+    // TODO: implement getAllCompanies
     throw UnimplementedError();
   }
 }

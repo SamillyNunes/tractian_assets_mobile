@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../core/app_icons.dart';
+import '../view_models/assets_view_model.dart';
+import 'widgets/search_input.dart';
+import 'widgets/custom_appbar.dart';
+import 'widgets/filter_button.dart';
+
+class AssetsView extends StatefulWidget {
+  const AssetsView({super.key});
+
+  @override
+  State<AssetsView> createState() => _AssetsViewState();
+}
+
+class _AssetsViewState extends State<AssetsView> {
+  @override
+  void initState() {
+    super.initState();
+
+    final viewModel = Provider.of<AssetsViewModel>(
+      context,
+      listen: false,
+    );
+    viewModel.fetchLocations();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = Provider.of<AssetsViewModel>(context);
+
+    return Scaffold(
+      appBar: const CustomAppbar(
+        label: 'Assets',
+        hasBackButton: true,
+      ),
+      body: Builder(
+        builder: (context) {
+          if (viewModel.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (viewModel.errorMsg?.isNotEmpty ?? false) {
+            return Center(
+              child: Text('${viewModel.errorMsg}'),
+            );
+          }
+
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SearchInput(),
+                    Row(
+                      children: [
+                        FilterButton(
+                          label: 'Sensor de Energia',
+                          icon: Icons.bolt,
+                          onPressed: () {},
+                        ),
+                        const SizedBox(width: 10),
+                        FilterButton(
+                          label: 'Crítico',
+                          icon: Icons.warning_amber_rounded,
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Divider(color: Colors.grey.shade300),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: viewModel.locations.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                          ),
+                          Image.asset(AppIcons.locationIcon),
+                          Text(
+                            viewModel.locations[index].name,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
