@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../core/app_icons.dart';
 import '../view_models/assets_view_model.dart';
+import 'widgets/asset_item.dart';
 import 'widgets/search_input.dart';
 import 'widgets/custom_appbar.dart';
 import 'widgets/filter_button.dart';
@@ -85,21 +86,15 @@ class _AssetsViewState extends State<AssetsView> {
               ),
               Divider(color: Colors.grey.shade300),
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
                   itemCount: viewModel.locations.length,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 10);
+                  },
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                          ),
-                          Image.asset(AppIcons.locationIcon),
-                          Text(
-                            viewModel.locations[index].name,
-                          ),
-                        ],
-                      ),
+                    return AssetItem(
+                      label: viewModel.locations[index].name,
+                      iconUrl: AppIcons.locationIcon,
                     );
                   },
                 ),
