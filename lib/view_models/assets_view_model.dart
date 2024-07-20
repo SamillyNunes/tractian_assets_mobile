@@ -10,13 +10,26 @@ class AssetsViewModel extends ChangeNotifier {
 
   List<CompanyModel> companies = [];
   List<LocationModel> locations = [];
+
   CompanyModel? companySelected;
+  bool sensorFilterIsPressed = false;
+  bool criticalFilterIsPressed = false;
 
   bool isLoading = false;
   String? errorMsg;
 
   selectCompany({required CompanyModel company}) {
     companySelected = company;
+  }
+
+  setSensorFilterStatus(bool status) {
+    sensorFilterIsPressed = status;
+    notifyListeners();
+  }
+
+  setCriticalSensorStatus(bool status) {
+    criticalFilterIsPressed = status;
+    notifyListeners();
   }
 
   Future fetchCompanies() async {

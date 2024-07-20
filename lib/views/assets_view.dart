@@ -60,13 +60,23 @@ class _AssetsViewState extends State<AssetsView> {
                         FilterButton(
                           label: 'Sensor de Energia',
                           icon: Icons.bolt,
-                          onPressed: () {},
+                          isPressed: viewModel.sensorFilterIsPressed,
+                          onPressed: () {
+                            final currentStatus =
+                                viewModel.sensorFilterIsPressed;
+                            viewModel.setSensorFilterStatus(!currentStatus);
+                          },
                         ),
                         const SizedBox(width: 10),
                         FilterButton(
                           label: 'Crítico',
                           icon: Icons.warning_amber_rounded,
-                          onPressed: () {},
+                          isPressed: viewModel.criticalFilterIsPressed,
+                          onPressed: () {
+                            final currentStatus =
+                                viewModel.criticalFilterIsPressed;
+                            viewModel.setCriticalSensorStatus(!currentStatus);
+                          },
                         ),
                       ],
                     ),

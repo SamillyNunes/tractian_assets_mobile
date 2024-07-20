@@ -24,12 +24,10 @@ class FilterButton extends StatelessWidget {
         margin: const EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
           color: isPressed ? AppColors.blue : null,
-          border: isPressed
-              ? null
-              : Border.all(
-                  color: Colors.grey.shade300,
-                  width: 2,
-                ),
+          border: Border.all(
+            color: isPressed ? AppColors.blue : Colors.grey.shade300,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Row(
