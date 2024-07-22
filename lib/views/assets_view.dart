@@ -24,7 +24,8 @@ class _AssetsViewState extends State<AssetsView> {
       context,
       listen: false,
     );
-    viewModel.fetchLocations();
+    // viewModel.fetchLocations();
+    viewModel.fetchAssets();
   }
 
   @override

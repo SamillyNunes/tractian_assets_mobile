@@ -23,6 +23,7 @@ class AssetItem extends StatefulWidget {
 class _AssetItemState extends State<AssetItem> {
   bool isOpened = false;
 
+  List? assetsOrLocationsList;
   List? assetsList;
   bool assetsListHasLocations = false;
 
@@ -30,8 +31,39 @@ class _AssetItemState extends State<AssetItem> {
   void initState() {
     super.initState();
 
-    assetsList = widget.location?.subLocations ?? widget.asset?.childAssets;
+    assetsOrLocationsList =
+        widget.location?.subLocations ?? widget.asset?.childAssets;
     assetsListHasLocations = widget.location != null;
+
+    if (assetsListHasLocations) {
+      print('locations: ${widget.location} ');
+      assetsList = widget.location?.assets;
+    }
+  }
+
+  List<Widget> transformListIntoAssetItem(
+      {required List assets, bool isAssetOrComponent = false}) {
+    return [
+      ...assets.map(
+        (obj) => Row(
+          children: [
+            Container(
+              height: 40,
+              width: 0.5,
+              margin: const EdgeInsets.symmetric(horizontal: 13),
+              color: Colors.grey.shade400,
+            ),
+            AssetItem(
+              iconUrl: isAssetOrComponent
+                  ? AppIcons.assetIcon
+                  : AppIcons.locationIcon,
+              location: isAssetOrComponent ? null : obj,
+              asset: isAssetOrComponent ? obj : null,
+            ),
+          ],
+        ),
+      ),
+    ];
   }
 
   @override
@@ -50,7 +82,8 @@ class _AssetItemState extends State<AssetItem> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                (assetsList?.isNotEmpty ?? false)
+                ((assetsOrLocationsList?.isNotEmpty ?? false) ||
+                        (assetsList?.isNotEmpty ?? false))
                     ? const Icon(
                         Icons.keyboard_arrow_down,
                         size: 25,
@@ -62,7 +95,7 @@ class _AssetItemState extends State<AssetItem> {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  widget.location?.name ?? widget.location?.name ?? '',
+                  widget.location?.name ?? widget.asset?.name ?? '',
                   style: const TextStyle(
                     fontWeight: FontWeight.w400,
                   ),
@@ -70,28 +103,13 @@ class _AssetItemState extends State<AssetItem> {
               ],
             ),
           ),
-          if ((assetsList?.isNotEmpty ?? false) && isOpened) ...[
-            // const SizedBox(height: 5),
-            ...assetsList!.map(
-              (obj) => Row(
-                children: [
-                  Container(
-                    height: 40,
-                    width: 0.5,
-                    margin: const EdgeInsets.symmetric(horizontal: 13),
-                    color: Colors.grey.shade400,
-                  ),
-                  AssetItem(
-                    iconUrl: assetsListHasLocations
-                        ? AppIcons.locationIcon
-                        : AppIcons.assetIcon,
-                    location: assetsListHasLocations ? obj : null,
-                    asset: assetsListHasLocations ? null : obj,
-                  ),
-                ],
-              ),
+          if ((assetsOrLocationsList?.isNotEmpty ?? false) && isOpened)
+            ...transformListIntoAssetItem(assets: assetsOrLocationsList!),
+          if ((assetsList?.isNotEmpty ?? false) && isOpened)
+            ...transformListIntoAssetItem(
+              assets: assetsList!,
+              isAssetOrComponent: true,
             ),
-          ],
         ],
       ),
     );

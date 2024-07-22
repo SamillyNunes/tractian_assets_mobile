@@ -1,6 +1,5 @@
-import 'package:tractian_assets_mobile/data/services/api_service.dart';
-
 import '../models/models.dart';
+import '../services/api_service.dart';
 import 'assets_repository.dart';
 
 class AssetsRepositoryImpl implements AssetsRepository {
@@ -32,8 +31,14 @@ class AssetsRepositoryImpl implements AssetsRepository {
   }
 
   @override
-  Future<List<AssetModel>> getAllAssets(String companyId) {
-    // TODO: implement getAllCompanies
-    throw UnimplementedError();
+  Future<List<AssetModel>> getAllAssets(String companyId) async {
+    try {
+      final data =
+          await apiService.get(resource: 'companies/$companyId/assets');
+
+      return data.map((json) => AssetModel.fromMap(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to get assets, error: $e');
+    }
   }
 }

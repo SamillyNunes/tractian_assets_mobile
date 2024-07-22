@@ -10,6 +10,7 @@ class AssetsViewModel extends ChangeNotifier {
 
   List<CompanyModel> companies = [];
   List<LocationModel> locations = [];
+  List<AssetModel> assets = [];
 
   CompanyModel? companySelected;
   bool sensorFilterIsPressed = false;
@@ -46,7 +47,7 @@ class AssetsViewModel extends ChangeNotifier {
     }
   }
 
-  Future fetchLocations() async {
+  Future<List<LocationModel>> _fetchLocations() async {
     isLoading = true;
     errorMsg = '';
 
@@ -82,12 +83,49 @@ class AssetsViewModel extends ChangeNotifier {
           }
         }
 
-        locations = rootLocations;
+        return rootLocations;
+      } else {
+        errorMsg = 'Select a company';
+        return [];
+      }
+    } catch (e) {
+      errorMsg = 'Failed to get locations';
+      return [];
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future fetchAssets() async {
+    isLoading = true;
+    errorMsg = '';
+
+    try {
+      if (companySelected != null) {
+        final localsCopy = await _fetchLocations();
+
+        final allAssets =
+            await assetsRepository.getAllAssets(companySelected!.id);
+
+        print('all assets: $allAssets');
+
+        for (var local in localsCopy) {
+          final assetsFromLocal =
+              allAssets.where((asset) => asset.locationId == local.id).toList();
+
+          local.assets = assetsFromLocal;
+        }
+
+        locations = localsCopy;
+
+        print('locations: ${locations[0].assets}');
+        print('locations: ${localsCopy[0].assets}');
       } else {
         errorMsg = 'Select a company';
       }
     } catch (e) {
-      errorMsg = 'Failed to get locations';
+      errorMsg = 'Failed to get assets';
     } finally {
       isLoading = false;
       notifyListeners();
