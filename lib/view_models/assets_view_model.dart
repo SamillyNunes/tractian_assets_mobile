@@ -10,7 +10,6 @@ class AssetsViewModel extends ChangeNotifier {
 
   List<CompanyModel> companies = [];
   List<LocationModel> locations = [];
-  List<LocationModel> subLocations = [];
 
   CompanyModel? companySelected;
   bool sensorFilterIsPressed = false;
@@ -56,11 +55,34 @@ class AssetsViewModel extends ChangeNotifier {
         final allLocationsList =
             await assetsRepository.getAllLocations(companySelected!.id);
 
-        locations =
-            allLocationsList.where((local) => !local.isSubLocation()).toList();
+        final rootLocations = <LocationModel>[];
+        final waitingSublocations = <LocationModel>[];
 
-        subLocations =
-            allLocationsList.where((local) => local.isSubLocation()).toList();
+        for (var local in allLocationsList) {
+          if (local.isSubLocation()) {
+            final rootList =
+                rootLocations.where((l) => l.id == local.parentId).toList();
+
+            if (rootList.isNotEmpty) {
+              rootList[0].subLocations.add(local);
+            } else {
+              waitingSublocations.add(local);
+            }
+          } else {
+            rootLocations.add(local);
+          }
+        }
+
+        for (var sublocation in waitingSublocations) {
+          final rootList =
+              rootLocations.where((l) => l.id == sublocation.parentId).toList();
+
+          if (rootList.isNotEmpty) {
+            rootList[0].subLocations.add(sublocation);
+          }
+        }
+
+        locations = rootLocations;
       } else {
         errorMsg = 'Select a company';
       }

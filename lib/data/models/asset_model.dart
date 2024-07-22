@@ -7,6 +7,7 @@ class AssetModel {
   String? status;
   String? gatewayId;
   String? locationId;
+  List<AssetModel> childAssets = [];
 
   AssetModel({
     required this.id,

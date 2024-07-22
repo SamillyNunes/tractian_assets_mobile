@@ -92,9 +92,11 @@ class _AssetsViewState extends State<AssetsView> {
                     return const SizedBox(height: 10);
                   },
                   itemBuilder: (context, index) {
+                    final location = viewModel.locations[index];
+
                     return AssetItem(
-                      label: viewModel.locations[index].name,
                       iconUrl: AppIcons.locationIcon,
+                      location: location,
                     );
                   },
                 ),

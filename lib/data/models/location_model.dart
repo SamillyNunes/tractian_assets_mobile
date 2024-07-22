@@ -1,7 +1,11 @@
+import 'package:tractian_assets_mobile/data/models/asset_model.dart';
+
 class LocationModel {
   String id;
   String name;
   String? parentId;
+  List<LocationModel> subLocations = [];
+  List<AssetModel> assets = [];
 
   LocationModel({
     required this.id,
@@ -19,5 +23,13 @@ class LocationModel {
 
   bool isSubLocation() {
     return parentId != null;
+  }
+
+  void addLocationsList(List<LocationModel> list) {
+    subLocations = list;
+  }
+
+  void adAssetsList(List<AssetModel> list) {
+    assets = list;
   }
 }
