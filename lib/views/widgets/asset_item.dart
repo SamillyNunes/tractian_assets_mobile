@@ -48,6 +48,7 @@ class _AssetItemState extends State<AssetItem> {
     return [
       ...assets.map(
         (obj) => Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 40,

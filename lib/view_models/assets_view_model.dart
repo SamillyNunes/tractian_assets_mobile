@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tractian_assets_mobile/utils/assets_utils.dart';
 
 import '../data/models/models.dart';
 import '../data/repositories/assets_repository.dart';
@@ -146,19 +147,15 @@ class AssetsViewModel extends ChangeNotifier {
         final allAssets =
             await assetsRepository.getAllAssets(companySelected!.id);
 
-        // for (var local in localsCopy) {
-        //   final assetsFromLocal =
-        //       allAssets.where((asset) => asset.locationId == local.id).toList();
-
-        //   local.assets = assetsFromLocal;
-        // }
-
         final formatedAssets = _getSubAssets(allAssets);
 
-        final formatedLocations =
-            _getAssetsFromLocal(localsCopy, formatedAssets);
+        final sortedAssets = AssetsUtils.sortAssetsList(formatedAssets);
 
-        locations = formatedLocations;
+        final formatedLocations = _getAssetsFromLocal(localsCopy, sortedAssets);
+
+        final sortedLocations = AssetsUtils.sortLocationList(formatedLocations);
+
+        locations = sortedLocations;
       } else {
         errorMsg = 'Select a company';
       }
