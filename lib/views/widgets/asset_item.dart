@@ -57,7 +57,9 @@ class _AssetItemState extends State<AssetItem> {
             ),
             AssetItem(
               iconUrl: isAssetOrComponent
-                  ? AppIcons.assetIcon
+                  ? (obj?.sensorType != null)
+                      ? AppIcons.componentIcon
+                      : AppIcons.assetIcon
                   : AppIcons.locationIcon,
               location: isAssetOrComponent ? null : obj,
               asset: isAssetOrComponent ? obj : null,
