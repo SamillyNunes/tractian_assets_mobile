@@ -97,6 +97,44 @@ class AssetsViewModel extends ChangeNotifier {
     }
   }
 
+  List<AssetModel> _getSubAssets(List<AssetModel> allAssets) {
+    final assetsTemp = allAssets;
+    for (var asset in assetsTemp) {
+      final subAssets =
+          assetsTemp.where((a) => a.parentId == asset.id).toList();
+      asset.childAssets = subAssets;
+
+      // chamada recursiva para pegar as pecas filhas das outras subpecas
+      if (subAssets.isNotEmpty) {
+        _getSubAssets(subAssets);
+      }
+    }
+
+    return assetsTemp;
+  }
+
+  List<LocationModel> _getAssetsFromLocal(
+      List<LocationModel> allLocals, List<AssetModel> allAssets) {
+    final locations = allLocals;
+    for (var local in locations) {
+      // check assets for the sublocation
+      for (var sublocation in local.subLocations) {
+        final sublocationAssets =
+            allAssets.where((a) => a.locationId == sublocation.id).toList();
+
+        sublocation.assets = sublocationAssets;
+      }
+
+      // check this location assets
+      final assetsFromLocal =
+          allAssets.where((asset) => asset.locationId == local.id).toList();
+
+      local.assets = assetsFromLocal;
+    }
+
+    return locations;
+  }
+
   Future fetchAssets() async {
     isLoading = true;
     errorMsg = '';
@@ -108,19 +146,19 @@ class AssetsViewModel extends ChangeNotifier {
         final allAssets =
             await assetsRepository.getAllAssets(companySelected!.id);
 
-        print('all assets: $allAssets');
+        // for (var local in localsCopy) {
+        //   final assetsFromLocal =
+        //       allAssets.where((asset) => asset.locationId == local.id).toList();
 
-        for (var local in localsCopy) {
-          final assetsFromLocal =
-              allAssets.where((asset) => asset.locationId == local.id).toList();
+        //   local.assets = assetsFromLocal;
+        // }
 
-          local.assets = assetsFromLocal;
-        }
+        final formatedAssets = _getSubAssets(allAssets);
 
-        locations = localsCopy;
+        final formatedLocations =
+            _getAssetsFromLocal(localsCopy, formatedAssets);
 
-        print('locations: ${locations[0].assets}');
-        print('locations: ${localsCopy[0].assets}');
+        locations = formatedLocations;
       } else {
         errorMsg = 'Select a company';
       }

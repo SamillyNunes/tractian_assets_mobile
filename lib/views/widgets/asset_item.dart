@@ -8,12 +8,14 @@ class AssetItem extends StatefulWidget {
   final LocationModel? location;
   final AssetModel? asset;
   final String iconUrl;
+  // final bool? isAssetOrComponent;
 
   const AssetItem({
     super.key,
     required this.iconUrl,
     this.location,
     this.asset,
+    // this.isAssetOrComponent,
   }) : assert(location == null || asset == null);
 
   @override
@@ -59,6 +61,7 @@ class _AssetItemState extends State<AssetItem> {
                   : AppIcons.locationIcon,
               location: isAssetOrComponent ? null : obj,
               asset: isAssetOrComponent ? obj : null,
+              // isAssetOrComponent: isAssetOrComponent,
             ),
           ],
         ),
@@ -104,7 +107,10 @@ class _AssetItemState extends State<AssetItem> {
             ),
           ),
           if ((assetsOrLocationsList?.isNotEmpty ?? false) && isOpened)
-            ...transformListIntoAssetItem(assets: assetsOrLocationsList!),
+            ...transformListIntoAssetItem(
+              assets: assetsOrLocationsList!,
+              isAssetOrComponent: widget.asset != null,
+            ),
           if ((assetsList?.isNotEmpty ?? false) && isOpened)
             ...transformListIntoAssetItem(
               assets: assetsList!,
