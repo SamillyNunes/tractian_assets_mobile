@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/app_icons.dart';
+import '../data/models/models.dart';
 import '../view_models/assets_view_model.dart';
 import 'widgets/asset_item.dart';
 import 'widgets/search_input.dart';
@@ -88,16 +89,30 @@ class _AssetsViewState extends State<AssetsView> {
               Divider(color: Colors.grey.shade300),
               Expanded(
                 child: ListView.separated(
-                  itemCount: viewModel.locations.length,
+                  itemCount: viewModel.locations.length +
+                      viewModel.unlinkedAssets.length,
                   separatorBuilder: (context, index) {
                     return const SizedBox(height: 10);
                   },
                   itemBuilder: (context, index) {
-                    final location = viewModel.locations[index];
+                    final locationsLenght = viewModel.locations.length;
+
+                    LocationModel? location;
+                    AssetModel? asset;
+
+                    if (index >= locationsLenght) {
+                      final unlinkedIndex = index - locationsLenght;
+                      asset = viewModel.unlinkedAssets[unlinkedIndex];
+                    } else {
+                      location = viewModel.locations[index];
+                    }
 
                     return AssetItem(
-                      iconUrl: AppIcons.locationIcon,
+                      iconUrl: location != null
+                          ? AppIcons.locationIcon
+                          : AppIcons.componentIcon,
                       location: location,
+                      asset: asset,
                     );
                   },
                 ),

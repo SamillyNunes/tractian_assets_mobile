@@ -11,7 +11,7 @@ class AssetsViewModel extends ChangeNotifier {
 
   List<CompanyModel> companies = [];
   List<LocationModel> locations = [];
-  List<AssetModel> assets = [];
+  List<AssetModel> unlinkedAssets = [];
 
   CompanyModel? companySelected;
   bool sensorFilterIsPressed = false;
@@ -100,7 +100,13 @@ class AssetsViewModel extends ChangeNotifier {
 
   List<AssetModel> _getSubAssets(List<AssetModel> allAssets) {
     final assetsTemp = allAssets;
+    final unlinked = <AssetModel>[];
     for (var asset in assetsTemp) {
+      if (asset.isUnliked()) {
+        unlinked.add(asset);
+        continue;
+      }
+
       final subAssets =
           assetsTemp.where((a) => a.parentId == asset.id).toList();
       asset.childAssets = subAssets;
@@ -110,6 +116,8 @@ class AssetsViewModel extends ChangeNotifier {
         _getSubAssets(subAssets);
       }
     }
+
+    unlinkedAssets = unlinked;
 
     return assetsTemp;
   }
