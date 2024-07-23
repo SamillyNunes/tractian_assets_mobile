@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tractian_assets_mobile/core/app_icons.dart';
 
+import '../../core/app_icons.dart';
 import '../../data/models/asset_model.dart';
 import '../../data/models/location_model.dart';
 
@@ -8,14 +8,12 @@ class AssetItem extends StatefulWidget {
   final LocationModel? location;
   final AssetModel? asset;
   final String iconUrl;
-  // final bool? isAssetOrComponent;
 
   const AssetItem({
     super.key,
     required this.iconUrl,
     this.location,
     this.asset,
-    // this.isAssetOrComponent,
   }) : assert(location == null || asset == null);
 
   @override
@@ -38,38 +36,32 @@ class _AssetItemState extends State<AssetItem> {
     assetsListHasLocations = widget.location != null;
 
     if (assetsListHasLocations) {
-      print('locations: ${widget.location} ');
       assetsList = widget.location?.assets;
     }
   }
 
-  List<Widget> transformListIntoAssetItem(
+  Widget transformListIntoAssetItem(
       {required List assets, bool isAssetOrComponent = false}) {
-    return [
-      ...assets.map(
-        (obj) => Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 40,
-              width: 0.5,
-              margin: const EdgeInsets.symmetric(horizontal: 13),
-              color: Colors.grey.shade400,
-            ),
-            AssetItem(
-              iconUrl: isAssetOrComponent
-                  ? (obj?.sensorType != null)
-                      ? AppIcons.componentIcon
-                      : AppIcons.assetIcon
-                  : AppIcons.locationIcon,
-              location: isAssetOrComponent ? null : obj,
-              asset: isAssetOrComponent ? obj : null,
-              // isAssetOrComponent: isAssetOrComponent,
-            ),
-          ],
-        ),
-      ),
-    ];
+    return ListView.builder(
+      itemCount: assets.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        final asset = assets[index];
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: AssetItem(
+            iconUrl: isAssetOrComponent
+                ? (asset?.sensorType != null)
+                    ? AppIcons.componentIcon
+                    : AppIcons.assetIcon
+                : AppIcons.locationIcon,
+            location: isAssetOrComponent ? null : asset,
+            asset: isAssetOrComponent ? asset : null,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -100,22 +92,25 @@ class _AssetItemState extends State<AssetItem> {
                   height: 25,
                 ),
                 const SizedBox(width: 5),
-                Text(
-                  widget.location?.name ?? widget.asset?.name ?? '',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w400,
+                Expanded(
+                  child: Text(
+                    widget.location?.name ?? widget.asset?.name ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           if ((assetsOrLocationsList?.isNotEmpty ?? false) && isOpened)
-            ...transformListIntoAssetItem(
+            transformListIntoAssetItem(
               assets: assetsOrLocationsList!,
               isAssetOrComponent: widget.asset != null,
             ),
           if ((assetsList?.isNotEmpty ?? false) && isOpened)
-            ...transformListIntoAssetItem(
+            transformListIntoAssetItem(
               assets: assetsList!,
               isAssetOrComponent: true,
             ),
