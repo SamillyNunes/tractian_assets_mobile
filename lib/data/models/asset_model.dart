@@ -1,10 +1,12 @@
+import '../types/types.dart';
+
 class AssetModel {
   String id;
   String name;
   String? parentId;
   String? sensorId;
-  String? sensorType;
-  String? status;
+  SensorType? sensorType;
+  AssetStatusType? status;
   String? gatewayId;
   String? locationId;
   List<AssetModel> childAssets = [];
@@ -26,8 +28,8 @@ class AssetModel {
       name: map["name"],
       parentId: map["parentId"],
       sensorId: map["sensorId"],
-      sensorType: map["sensorType"],
-      status: map["status"],
+      sensorType: SensorTypeExtension.fromString(map["sensorType"]),
+      status: AssetStatusTypeExtension.fromString(map["status"]),
       gatewayId: map["gatewayId"],
       locationId: map["locationId"],
     );

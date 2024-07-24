@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tractian_assets_mobile/data/types/asset_status_type.dart';
 
 import '../../core/app_icons.dart';
 import '../../data/models/asset_model.dart';
@@ -67,7 +68,7 @@ class _AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
     final status = widget.asset?.status != null
-        ? (widget.asset!.status!.toLowerCase() == 'operating' ? true : false)
+        ? (widget.asset!.status == AssetStatusType.operating ? true : false)
         : null;
 
     return Padding(
