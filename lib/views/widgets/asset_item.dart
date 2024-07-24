@@ -109,18 +109,18 @@ class _AssetItemState extends State<AssetItem> {
                       ),
                       if (status != null)
                         status
-                            ? const Padding(
+                            ? const Icon(
+                                Icons.bolt,
+                                color: Colors.green,
+                                size: 15,
+                              )
+                            : const Padding(
                                 padding: EdgeInsets.only(left: 5),
                                 child: Icon(
                                   Icons.circle,
                                   color: Colors.red,
                                   size: 10,
                                 ),
-                              )
-                            : const Icon(
-                                Icons.bolt,
-                                color: Colors.green,
-                                size: 15,
                               ),
                     ],
                   ),

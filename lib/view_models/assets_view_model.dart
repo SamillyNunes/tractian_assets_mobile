@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tractian_assets_mobile/data/types/types.dart';
 import 'package:tractian_assets_mobile/utils/assets_utils.dart';
 
 import '../data/models/models.dart';
@@ -12,6 +13,7 @@ class AssetsViewModel extends ChangeNotifier {
   List<CompanyModel> companies = [];
   List<LocationModel> locations = [];
   List<AssetModel> unlinkedAssets = [];
+  List<AssetModel> assets = [];
 
   CompanyModel? companySelected;
   bool sensorFilterIsPressed = false;
@@ -26,11 +28,13 @@ class AssetsViewModel extends ChangeNotifier {
 
   setSensorFilterStatus(bool status) {
     sensorFilterIsPressed = status;
+    fetchAssetsWithFilter();
     notifyListeners();
   }
 
   setCriticalSensorStatus(bool status) {
     criticalFilterIsPressed = status;
+    fetchAssetsWithFilter();
     notifyListeners();
   }
 
@@ -124,8 +128,8 @@ class AssetsViewModel extends ChangeNotifier {
 
   List<LocationModel> _getAssetsFromLocal(
       List<LocationModel> allLocals, List<AssetModel> allAssets) {
-    final locations = allLocals;
-    for (var local in locations) {
+    final locals = allLocals;
+    for (var local in locals) {
       // check assets for the sublocation
       for (var sublocation in local.subLocations) {
         final sublocationAssets =
@@ -141,7 +145,7 @@ class AssetsViewModel extends ChangeNotifier {
       local.assets = assetsFromLocal;
     }
 
-    return locations;
+    return locals;
   }
 
   Future fetchAssets() async {
@@ -159,6 +163,8 @@ class AssetsViewModel extends ChangeNotifier {
 
         final sortedAssets = AssetsUtils.sortAssetsList(formatedAssets);
 
+        assets = sortedAssets;
+
         final formatedLocations = _getAssetsFromLocal(localsCopy, sortedAssets);
 
         final sortedLocations = AssetsUtils.sortLocationList(formatedLocations);
@@ -171,6 +177,46 @@ class AssetsViewModel extends ChangeNotifier {
       errorMsg = 'Failed to get assets';
     } finally {
       isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future fetchAssetsWithFilter() async {
+    try {
+      isLoading = true;
+      final filteredAssets = assets.where((a) {
+        bool condition1 = true;
+        bool condition2 = true;
+
+        if (sensorFilterIsPressed) {
+          condition1 =
+              a.sensorType == SensorType.energy || a.sensorType == null;
+        }
+
+        if (criticalFilterIsPressed) {
+          condition2 = a.status == AssetStatusType.alert || a.status == null;
+        }
+
+        return condition1 && condition2;
+      }).toList();
+
+      final filteredSubassets = _getSubAssets(filteredAssets);
+
+      locations = [];
+
+      final localsCopy = await _fetchLocations();
+
+      final formatedLocations =
+          _getAssetsFromLocal(localsCopy, filteredSubassets);
+
+      final sortedLocations = AssetsUtils.sortLocationList(formatedLocations);
+
+      locations = sortedLocations;
+    } catch (e) {
+      errorMsg = 'Failed to fetch';
+    } finally {
+      isLoading = false;
+
       notifyListeners();
     }
   }
