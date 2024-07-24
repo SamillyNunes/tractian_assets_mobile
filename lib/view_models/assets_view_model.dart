@@ -18,6 +18,7 @@ class AssetsViewModel extends ChangeNotifier {
   CompanyModel? companySelected;
   bool sensorFilterIsPressed = false;
   bool criticalFilterIsPressed = false;
+  String searchingText = '';
 
   bool isLoading = false;
   String? errorMsg;
@@ -28,14 +29,25 @@ class AssetsViewModel extends ChangeNotifier {
 
   setSensorFilterStatus(bool status) {
     sensorFilterIsPressed = status;
-    fetchAssetsWithFilter();
+    fetchAssets(fetchDataAgain: false);
     notifyListeners();
   }
 
   setCriticalSensorStatus(bool status) {
     criticalFilterIsPressed = status;
-    fetchAssetsWithFilter();
+    fetchAssets(fetchDataAgain: false);
     notifyListeners();
+  }
+
+  changeSearchingText(String value) {
+    searchingText = value;
+    notifyListeners();
+  }
+
+  submitSearchedText(String value) {
+    locations = [];
+    notifyListeners();
+    fetchAssets();
   }
 
   Future fetchCompanies() async {
@@ -78,19 +90,42 @@ class AssetsViewModel extends ChangeNotifier {
     }
   }
 
-  Future fetchAssets() async {
+  Future fetchAssets({bool fetchDataAgain = true}) async {
     isLoading = true;
     errorMsg = '';
+    if (fetchDataAgain) {
+      locations = [];
+    }
 
     try {
       if (companySelected != null) {
-        final localsCopy = await _fetchLocations();
+        final localsCopy = fetchDataAgain ? await _fetchLocations() : locations;
 
         final allAssets =
             await assetsRepository.getAllAssets(companySelected!.id);
 
+        assets = allAssets;
+
+        List<AssetModel> tempAssets = [];
+
+        if (searchingText.isNotEmpty) {
+          tempAssets = allAssets
+              .where((a) =>
+                  a.name.toLowerCase().contains(searchingText.toLowerCase()))
+              .toList();
+        }
+
+        if (criticalFilterIsPressed || sensorFilterIsPressed) {
+          tempAssets =
+              _filterAssets(tempAssets.isNotEmpty ? tempAssets : allAssets);
+        }
+
+        if (tempAssets.isEmpty) {
+          tempAssets = allAssets;
+        }
+
         final formatedAssetsMap =
-            AssetsUtils.formatAssetsListWithSubassets(allAssets);
+            AssetsUtils.formatAssetsListWithSubassets(tempAssets);
 
         if (formatedAssetsMap.containsKey('unlinked')) {
           unlinkedAssets = formatedAssetsMap['unlinked']!;
@@ -100,8 +135,6 @@ class AssetsViewModel extends ChangeNotifier {
             formatedAssetsMap.containsKey('assets')
                 ? formatedAssetsMap['assets']!
                 : []);
-
-        assets = sortedAssets;
 
         final formatedLocations =
             AssetsUtils.joinAssetsWithLocations(localsCopy, sortedAssets);
@@ -120,51 +153,22 @@ class AssetsViewModel extends ChangeNotifier {
     }
   }
 
-  Future fetchAssetsWithFilter() async {
-    try {
-      isLoading = true;
-      final filteredAssets = assets.where((a) {
-        bool condition1 = true;
-        bool condition2 = true;
+  _filterAssets(List<AssetModel> allAssets) {
+    final filteredAssets = allAssets.where((a) {
+      bool condition1 = true;
+      bool condition2 = true;
 
-        if (sensorFilterIsPressed) {
-          condition1 =
-              a.sensorType == SensorType.energy || a.sensorType == null;
-        }
+      if (sensorFilterIsPressed) {
+        condition1 = a.sensorType == SensorType.energy || a.sensorType == null;
+      }
 
-        if (criticalFilterIsPressed) {
-          condition2 = a.status == AssetStatusType.alert || a.status == null;
-        }
+      if (criticalFilterIsPressed) {
+        condition2 = a.status == AssetStatusType.alert || a.status == null;
+      }
 
-        return condition1 && condition2;
-      }).toList();
+      return condition1 && condition2;
+    }).toList();
 
-      final assetsMap =
-          AssetsUtils.formatAssetsListWithSubassets(filteredAssets);
-
-      unlinkedAssets =
-          assetsMap.containsKey('unlinked') ? assetsMap['unlinked']! : [];
-
-      final filteredSubassets = assetsMap.containsKey('assets')
-          ? assetsMap['assets']!
-          : <AssetModel>[];
-
-      locations = [];
-
-      final localsCopy = await _fetchLocations();
-
-      final formatedLocations =
-          AssetsUtils.joinAssetsWithLocations(localsCopy, filteredSubassets);
-
-      final sortedLocations = AssetsUtils.sortLocationList(formatedLocations);
-
-      locations = sortedLocations;
-    } catch (e) {
-      errorMsg = 'Failed to fetch';
-    } finally {
-      isLoading = false;
-
-      notifyListeners();
-    }
+    return filteredAssets;
   }
 }

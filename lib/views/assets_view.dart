@@ -57,7 +57,11 @@ class _AssetsViewState extends State<AssetsView> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SearchInput(),
+                    SearchInput(
+                      onChange: viewModel.changeSearchingText,
+                      value: viewModel.searchingText,
+                      onSubmit: viewModel.submitSearchedText,
+                    ),
                     Row(
                       children: [
                         FilterButton(

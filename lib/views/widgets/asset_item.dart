@@ -26,20 +26,6 @@ class _AssetItemState extends State<AssetItem> {
 
   List? assetsOrLocationsList;
   List? assetsList;
-  bool assetsListHasLocations = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    assetsOrLocationsList =
-        widget.location?.subLocations ?? widget.asset?.childAssets;
-    assetsListHasLocations = widget.location != null;
-
-    if (assetsListHasLocations) {
-      assetsList = widget.location?.assets;
-    }
-  }
 
   Widget transformListIntoAssetItem(
       {required List assets, bool isAssetOrComponent = false}) {
@@ -67,6 +53,13 @@ class _AssetItemState extends State<AssetItem> {
 
   @override
   Widget build(BuildContext context) {
+    assetsOrLocationsList =
+        widget.location?.subLocations ?? widget.asset?.childAssets;
+
+    if (widget.location != null) {
+      assetsList = widget.location?.assets;
+    }
+
     final status = widget.asset?.status != null
         ? (widget.asset!.status == AssetStatusType.operating ? true : false)
         : null;
