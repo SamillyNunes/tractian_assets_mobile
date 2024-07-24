@@ -66,6 +66,10 @@ class _AssetItemState extends State<AssetItem> {
 
   @override
   Widget build(BuildContext context) {
+    final status = widget.asset?.status != null
+        ? (widget.asset!.status!.toLowerCase() == 'operating' ? true : false)
+        : null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
@@ -93,12 +97,31 @@ class _AssetItemState extends State<AssetItem> {
                 ),
                 const SizedBox(width: 5),
                 Expanded(
-                  child: Text(
-                    widget.location?.name ?? widget.asset?.name ?? '',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  child: Row(
+                    children: [
+                      Text(
+                        widget.location?.name ?? widget.asset?.name ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      if (status != null)
+                        status
+                            ? const Padding(
+                                padding: EdgeInsets.only(left: 5),
+                                child: Icon(
+                                  Icons.circle,
+                                  color: Colors.red,
+                                  size: 10,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.bolt,
+                                color: Colors.green,
+                                size: 15,
+                              ),
+                    ],
                   ),
                 ),
               ],
