@@ -75,10 +75,7 @@ class AssetsViewModel extends ChangeNotifier {
         final allLocationsList =
             await assetsRepository.getAllLocations(companySelected!.id);
 
-        final formatedLocations =
-            AssetsUtils.formatLocationListWithSublocations(allLocationsList);
-
-        locations = formatedLocations;
+        locations = allLocationsList;
       } else {
         errorMsg = 'Select a company';
       }
