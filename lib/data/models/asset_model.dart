@@ -44,10 +44,10 @@ class AssetModel {
   }
 
   bool hasLocationAsParent() {
-    return locationId != null && sensorId == null;
+    return locationId != null;
   }
 
   bool isSubAsset() {
-    return parentId != null && sensorId == null;
+    return parentId != null;
   }
 }

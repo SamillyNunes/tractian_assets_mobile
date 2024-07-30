@@ -26,7 +26,7 @@ class _AssetsViewState extends State<AssetsView> {
       listen: false,
     );
     // viewModel.fetchLocations();
-    viewModel.fetchAssets();
+    viewModel.buildNodes();
   }
 
   @override
@@ -99,30 +99,30 @@ class _AssetsViewState extends State<AssetsView> {
                 Divider(color: Colors.grey.shade300),
                 Expanded(
                   child: ListView.separated(
-                    itemCount: viewModel.locations.length +
-                        viewModel.unlinkedAssets.length,
+                    itemCount: viewModel.nodes.length,
                     separatorBuilder: (context, index) {
                       return const SizedBox(height: 10);
                     },
                     itemBuilder: (context, index) {
                       final locationsLenght = viewModel.locations.length;
 
-                      LocationModel? location;
-                      AssetModel? asset;
+                      // LocationModel? location;
+                      // AssetModel? asset;
 
-                      if (index >= locationsLenght) {
-                        final unlinkedIndex = index - locationsLenght;
-                        asset = viewModel.unlinkedAssets[unlinkedIndex];
-                      } else {
-                        location = viewModel.locations[index];
-                      }
+                      // if (index >= locationsLenght) {
+                      //   final unlinkedIndex = index - locationsLenght;
+                      //   asset = viewModel.unlinkedAssets[unlinkedIndex];
+                      // } else {
+                      //   location = viewModel.locations[index];
+                      // }
 
                       return AssetItem(
-                        iconUrl: location != null
-                            ? AppIcons.locationIcon
-                            : AppIcons.componentIcon,
-                        location: location,
-                        asset: asset,
+                        node: viewModel.nodes[index],
+                        // iconUrl: location != null
+                        //     ? AppIcons.locationIcon
+                        //     : AppIcons.componentIcon,
+                        // location: location,
+                        // asset: asset,
                       );
                     },
                   ),
