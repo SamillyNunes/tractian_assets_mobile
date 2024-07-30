@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/app_icons.dart';
-import '../data/models/models.dart';
 import '../view_models/assets_view_model.dart';
 import 'widgets/asset_item.dart';
 import 'widgets/search_input.dart';
@@ -104,8 +102,6 @@ class _AssetsViewState extends State<AssetsView> {
                       return const SizedBox(height: 10);
                     },
                     itemBuilder: (context, index) {
-                      final locationsLenght = viewModel.locations.length;
-
                       // LocationModel? location;
                       // AssetModel? asset;
 

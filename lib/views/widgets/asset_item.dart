@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_icons.dart';
-import '../../data/models/node_widget_model.dart';
+import '../../data/models/node_model.dart';
+import '../../data/types/node_type.dart';
 
 class AssetItem extends StatefulWidget {
   final NodeModel node;
@@ -61,6 +62,8 @@ class _AssetItemState extends State<AssetItem> {
     //     ? (widget.asset!.status == AssetStatusType.operating ? true : false)
     //     : null;
 
+    final node = widget.node;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
@@ -75,23 +78,27 @@ class _AssetItemState extends State<AssetItem> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                widget.node.children.isNotEmpty
+                node.children.isNotEmpty
                     ? const Icon(
                         Icons.keyboard_arrow_down,
                         size: 25,
                       )
                     : const SizedBox(width: 25),
-                // Image.asset(
-                //   widget.iconUrl,
-                //   height: 25,
-                // ),
+                Image.asset(
+                  node.type == NodeType.location
+                      ? AppIcons.locationIcon
+                      : node.type == NodeType.asset
+                          ? AppIcons.assetIcon
+                          : AppIcons.componentIcon,
+                  height: 25,
+                ),
                 const SizedBox(width: 5),
                 Expanded(
                   child: Row(
                     children: [
                       Text(
                         // widget.location?.name ?? widget.asset?.name ?? '',
-                        widget.node.title,
+                        node.title,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontWeight: FontWeight.w400,
@@ -118,9 +125,9 @@ class _AssetItemState extends State<AssetItem> {
               ],
             ),
           ),
-          if (widget.node.children.isNotEmpty && isOpened)
+          if (node.children.isNotEmpty && isOpened)
             transformListIntoAssetItem(
-              nodes: widget.node.children,
+              nodes: node.children,
               isAssetOrComponent: true, //TODO: ALTERAR
             ),
         ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tractian_assets_mobile/data/models/node_widget_model.dart';
 
 import '../data/models/models.dart';
+import '../data/models/node_model.dart';
 import '../data/repositories/assets_repository.dart';
 import '../data/types/types.dart';
 import '../utils/assets_utils.dart';
@@ -31,13 +31,13 @@ class AssetsViewModel extends ChangeNotifier {
 
   setSensorFilterStatus(bool status) {
     sensorFilterIsPressed = status;
-    fetchAssets(fetchDataAgain: false);
+    // fetchAssets();
     notifyListeners();
   }
 
   setCriticalSensorStatus(bool status) {
     criticalFilterIsPressed = status;
-    fetchAssets(fetchDataAgain: false);
+    // fetchAssets();
     notifyListeners();
   }
 
@@ -49,7 +49,7 @@ class AssetsViewModel extends ChangeNotifier {
   submitSearchedText(String value) {
     locations = [];
     notifyListeners();
-    fetchAssets();
+    // fetchAssets();
   }
 
   Future fetchCompanies() async {
@@ -90,12 +90,9 @@ class AssetsViewModel extends ChangeNotifier {
     }
   }
 
-  Future fetchAssets({bool fetchDataAgain = true}) async {
+  Future fetchAssets() async {
     isLoading = true;
     errorMsg = '';
-    // if (fetchDataAgain) {
-    //   locations = [];
-    // }
 
     try {
       if (companySelected != null) {
@@ -123,6 +120,7 @@ class AssetsViewModel extends ChangeNotifier {
         .map(
           (asset) => NodeModel(
             title: asset.name,
+            type: asset.isComponent() ? NodeType.component : NodeType.asset,
             // Passando o id desse asset para caso haja subassets
             children: _buildAssetsNodes(
               parentId: asset.id,
@@ -147,6 +145,7 @@ class AssetsViewModel extends ChangeNotifier {
           (local) => NodeModel(
             key: local.id,
             title: local.name,
+            type: NodeType.location,
             children: [
               ..._buildLocationNodes(
                 parentId: local.id,
