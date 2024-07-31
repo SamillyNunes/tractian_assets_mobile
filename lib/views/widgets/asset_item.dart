@@ -6,11 +6,9 @@ import '../../data/types/node_type.dart';
 
 class AssetItem extends StatefulWidget {
   final NodeModel node;
-  // final String iconUrl;
 
   const AssetItem({
     super.key,
-    // required this.iconUrl,
     required this.node,
   });
 
@@ -21,11 +19,7 @@ class AssetItem extends StatefulWidget {
 class _AssetItemState extends State<AssetItem> {
   bool isOpened = false;
 
-  // List? assetsOrLocationsList;
-  // List? assetsList;
-
-  Widget transformListIntoAssetItem(
-      {required List nodes, bool isAssetOrComponent = false}) {
+  Widget transformListIntoAssetItem({required List nodes}) {
     return ListView.builder(
       itemCount: nodes.length,
       shrinkWrap: true,
@@ -36,13 +30,6 @@ class _AssetItemState extends State<AssetItem> {
           padding: const EdgeInsets.only(left: 20),
           child: AssetItem(
             node: n,
-            // iconUrl: isAssetOrComponent
-            //     ? (asset?.sensorType != null)
-            //         ? AppIcons.componentIcon
-            //         : AppIcons.assetIcon
-            //     : AppIcons.locationIcon,
-            // location: isAssetOrComponent ? null : asset,
-            // asset: isAssetOrComponent ? asset : null,
           ),
         );
       },
@@ -51,17 +38,6 @@ class _AssetItemState extends State<AssetItem> {
 
   @override
   Widget build(BuildContext context) {
-    // assetsOrLocationsList =
-    //     widget.location?.subLocations ?? widget.asset?.childAssets;
-
-    // if (widget.location != null) {
-    //   assetsList = widget.location?.assets;
-    // }
-
-    // final status = widget.asset?.status != null
-    //     ? (widget.asset!.status == AssetStatusType.operating ? true : false)
-    //     : null;
-
     final node = widget.node;
 
     return Padding(
@@ -127,7 +103,6 @@ class _AssetItemState extends State<AssetItem> {
           if (node.children.isNotEmpty && isOpened)
             transformListIntoAssetItem(
               nodes: node.children,
-              isAssetOrComponent: true, //TODO: ALTERAR
             ),
         ],
       ),
