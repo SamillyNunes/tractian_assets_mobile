@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/models/models.dart';
-import '../data/models/node_model.dart';
 import '../data/repositories/assets_repository.dart';
-import '../data/types/types.dart';
 import '../utils/assets_utils.dart';
 
 class AssetsViewModel extends ChangeNotifier {
@@ -108,56 +106,6 @@ class AssetsViewModel extends ChangeNotifier {
     }
   }
 
-  List<NodeModel> _buildAssetsNodes(
-      {required String parentId,
-      required Map<String, List<AssetModel>> assetsMap}) {
-    if (!assetsMap.containsKey(parentId)) return [];
-
-    final list = assetsMap[parentId]!
-        .map(
-          (asset) => NodeModel(
-            title: asset.name,
-            type: asset.isComponent() ? NodeType.component : NodeType.asset,
-            // Passando o id desse asset para caso haja subassets
-            children: _buildAssetsNodes(
-              parentId: asset.id,
-              assetsMap: assetsMap,
-            ),
-          ),
-        )
-        .toList();
-
-    return list;
-  }
-
-  List<NodeModel> _buildLocationNodes({
-    required String parentId,
-    required Map<String, List<LocationModel>> locationMap,
-    required Map<String, List<AssetModel>> assetsMap,
-  }) {
-    if (!locationMap.containsKey(parentId)) return [];
-
-    final list = locationMap[parentId]!
-        .map(
-          (local) => NodeModel(
-            key: local.id,
-            title: local.name,
-            type: NodeType.location,
-            children: [
-              ..._buildLocationNodes(
-                parentId: local.id,
-                locationMap: locationMap,
-                assetsMap: assetsMap,
-              ),
-              ..._buildAssetsNodes(parentId: local.id, assetsMap: assetsMap)
-            ],
-          ),
-        )
-        .toList();
-
-    return list;
-  }
-
   Future buildNodes() async {
     isLoading = true;
 
@@ -184,7 +132,7 @@ class AssetsViewModel extends ChangeNotifier {
         // Separando cada asset por "pai"
         assetsMap.putIfAbsent(assetKey, () => []).add(asset);
       }
-      final localNodes = _buildLocationNodes(
+      final localNodes = AssetsUtils.buildLocationNodes(
         parentId: '',
         locationMap: locationsMap,
         assetsMap: assetsMap,
