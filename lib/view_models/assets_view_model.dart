@@ -132,13 +132,22 @@ class AssetsViewModel extends ChangeNotifier {
         // Separando cada asset por "pai"
         assetsMap.putIfAbsent(assetKey, () => []).add(asset);
       }
+
       final localNodes = AssetsUtils.buildLocationNodes(
         parentId: '',
         locationMap: locationsMap,
         assetsMap: assetsMap,
       );
 
-      nodes = localNodes;
+      final dislikedNodes = AssetsUtils.buildAssetsNodes(
+        parentId: 'disliked',
+        assetsMap: assetsMap,
+      );
+
+      nodes = [
+        ...localNodes,
+        ...dislikedNodes,
+      ];
     } catch (e) {
       errorMsg = 'Something got wrong';
     } finally {
