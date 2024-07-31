@@ -21,6 +21,8 @@ class AssetsUtils {
         )
         .toList();
 
+    sortNodesList(list);
+
     return list;
   }
 
@@ -49,6 +51,18 @@ class AssetsUtils {
         )
         .toList();
 
+    sortNodesList(list);
+
     return list;
+  }
+
+  static List<NodeModel> sortNodesList(List<NodeModel> nodes) {
+    nodes.sort(
+      (n1, n2) => n1.children.length < n2.children.length
+          ? n2.children.length
+          : n1.children.length,
+    );
+
+    return nodes;
   }
 }
