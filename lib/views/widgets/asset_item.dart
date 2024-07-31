@@ -97,28 +97,27 @@ class _AssetItemState extends State<AssetItem> {
                   child: Row(
                     children: [
                       Text(
-                        // widget.location?.name ?? widget.asset?.name ?? '',
                         node.title,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      // if (status != null)
-                      //   status
-                      //       ? const Icon(
-                      //           Icons.bolt,
-                      //           color: Colors.green,
-                      //           size: 15,
-                      //         )
-                      //       : const Padding(
-                      //           padding: EdgeInsets.only(left: 5),
-                      //           child: Icon(
-                      //             Icons.circle,
-                      //             color: Colors.red,
-                      //             size: 10,
-                      //           ),
-                      //         ),
+                      if (node.hasCriticalStatus == true)
+                        const Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Icon(
+                            Icons.circle,
+                            color: Colors.red,
+                            size: 10,
+                          ),
+                        ),
+                      if (node.isEnergySensor == true)
+                        const Icon(
+                          Icons.bolt,
+                          color: Colors.green,
+                          size: 15,
+                        ),
                     ],
                   ),
                 ),

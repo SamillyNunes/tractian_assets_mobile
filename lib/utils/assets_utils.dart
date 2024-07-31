@@ -1,5 +1,5 @@
 import '../data/models/models.dart';
-import '../data/types/node_type.dart';
+import '../data/types/types.dart';
 
 class AssetsUtils {
   static List<NodeModel> buildAssetsNodes(
@@ -12,6 +12,8 @@ class AssetsUtils {
           (asset) => NodeModel(
             title: asset.name,
             type: asset.isComponent() ? NodeType.component : NodeType.asset,
+            isEnergySensor: asset.sensorType == SensorType.energy,
+            hasCriticalStatus: asset.status == AssetStatusType.alert,
             // Passando o id desse asset para caso haja subassets
             children: buildAssetsNodes(
               parentId: asset.id,
